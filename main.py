@@ -5,7 +5,6 @@ from PyQt5.QtCore import QSize, pyqtSlot, QTimer
 from PyQt5 import QtMultimedia
 
 
-sound = QtMultimedia.QSound('beep.wav')
 # Наследуемся от QMainWindow
 class MainWindow(QMainWindow):
     # Переопределяем конструктор класса
@@ -13,6 +12,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         # Обязательно нужно вызвать метод супер класса
         QMainWindow.__init__(self)
+        self.sound = QtMultimedia.QSound('beep.wav')
+        self.setWindowIcon(QtGui.QIcon('icon.png'))
 
         self.setMinimumSize(QSize(480, 320))    # Устанавливаем размеры
         self.setMaximumSize(QSize(480, 320))    # Устанавливаем размеры
@@ -102,12 +103,13 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def stop_timer(self):
         self.timer.stop()
+        self.sound.stop()
         self.init_timer()
 
     @pyqtSlot()
     def beep(self):
         print("beep")
-        sound.play()
+        self.sound.play()
         print("beeped")
 
     @pyqtSlot()
@@ -118,9 +120,9 @@ class MainWindow(QMainWindow):
             minutes = self.timer_value // 60
             secs = self.timer_value % 60
             self.display.setText(f"{minutes}:{secs}")
-        else:
-            self.beep()
-            self.timer.stop()
+            if not self.timer_value:
+                self.beep()
+                self.timer.stop()
 
 if __name__ == "__main__":
     import sys
