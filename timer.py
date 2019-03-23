@@ -1,4 +1,5 @@
 import os
+import time
 
 from PyQt5 import QtCore, QtWidgets, QtGui, Qt
 from PyQt5.QtWidgets import QMainWindow, QLabel, QGridLayout, QWidget, qApp, \
@@ -70,6 +71,8 @@ class MainWindow(QMainWindow):
         self.timer_connected = False
         self.timer_value = 60*25
         self.timer = QTimer()
+        self.started_at = -1
+        self.beeping = False
         assert not self.timer.isActive()
 
     def setup_buttons(self):
@@ -77,7 +80,7 @@ class MainWindow(QMainWindow):
         self.start_button.resize(100, 100)
         self.start_button.setToolTip('Старт')
         self.start_button.move(10,30)
-        self.start_button.clicked.connect(self.setup_timer)
+        self.start_button.clicked.connect(self.start_timer)
 
         self.stop_button = QPushButton('Стоп', self)
         self.stop_button.resize(100, 100)
@@ -88,14 +91,9 @@ class MainWindow(QMainWindow):
     def setup_display(self):
         self.display = QLabel(self)
         self.display.setAlignment(Qt.Qt.AlignCenter)
-        self.display.setText("20:00")
         self.display.setFont(QtGui.QFont("Helvetica", 102))
         self.display.resize(440, 200)
         self.display.move(10, 135)
-        #self.display.setStyleSheet(""".QLabel {
-        #    border: 1px solid white;
-        #    border-radius: 2px;
-        #}""")
 
     def process_timer(self):
         try:
@@ -120,14 +118,14 @@ class MainWindow(QMainWindow):
         self.minutes.setText("25")
         self.minutes.setFont(QtGui.QFont("Helvetica", 64))
         self.minutes.resize(90, 90)
-        self.minutes.move(230, 30)
+        self.minutes.move(230, 35)
         self.minutes.textChanged.connect(self.process_timer)
 
         self.seconds = QLineEdit(self)
         self.seconds.setText("00")
         self.seconds.setFont(QtGui.QFont("Helvetica", 64))
         self.seconds.resize(90, 90)
-        self.seconds.move(340, 30)
+        self.seconds.move(340, 35)
         self.seconds.textChanged.connect(self.process_timer)
 
     def process_state_changes(self):
@@ -143,11 +141,12 @@ class MainWindow(QMainWindow):
             self.stop_button.setEnabled(False)
 
     @pyqtSlot()
-    def setup_timer(self):
+    def start_timer(self):
         if not self.timer_connected:
             self.timer.timeout.connect(self.tick)
         self.timer_connected = True
         self.timer.start(1000)
+        self.started_at = int(time.time())
         self.tick()
 
     @pyqtSlot()
@@ -156,23 +155,27 @@ class MainWindow(QMainWindow):
         self.sound.stop()
         self.process_timer()
         self.process_state_changes()
+        self.started_at = -1
+        self.beeping = False
 
     @pyqtSlot()
     def beep(self):
-        print("beep")
-        self.sound.play()
-        print("beeped")
+        if not self.beeping:
+            print("beep")
+            self.sound.play()
+            self.beeping = True
+            print("beeped")
 
     @pyqtSlot()
     def tick(self):
-        if self.timer_value:
-            print(self.timer_value)
-            self.timer_value -= 1
-            minutes = self.timer_value // 60
-            seconds = self.timer_value % 60
-            self.display.setText(f"{minutes:02d}:{seconds:02d}")
-            if not self.timer_value:
-                self.beep()
+        spent = int(time.time()) - self.started_at
+        left = max(0, (self.timer_value - spent))
+        minutes = left // 60
+        seconds = left % 60
+        print(left)
+        if left <= 0:
+            self.beep()
+        self.display.setText(f"{minutes:02d}:{seconds:02d}")
         self.process_state_changes()
 
 if __name__ == "__main__":
