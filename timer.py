@@ -76,13 +76,13 @@ class MainWindow(QMainWindow):
         self.start_button = QPushButton('Стартуем', self)
         self.start_button.resize(100, 100)
         self.start_button.setToolTip('Старт')
-        self.start_button.move(10,10)
+        self.start_button.move(10,30)
         self.start_button.clicked.connect(self.setup_timer)
 
         self.stop_button = QPushButton('Стоп', self)
         self.stop_button.resize(100, 100)
         self.stop_button.setToolTip('Стоп')
-        self.stop_button.move(120,10)
+        self.stop_button.move(120,30)
         self.stop_button.clicked.connect(self.stop_timer)
 
     def setup_display(self):
@@ -114,16 +114,16 @@ class MainWindow(QMainWindow):
     def setup_input(self):
         self.minutes = QLineEdit(self)
         self.minutes.setText("25")
-        self.minutes.setFont(QtGui.QFont("Helvetica", 72))
+        self.minutes.setFont(QtGui.QFont("Helvetica", 64))
         self.minutes.resize(100, 100)
-        self.minutes.move(230,10)
+        self.minutes.move(230, 30)
         self.minutes.textChanged.connect(self.process_timer)
 
         self.seconds = QLineEdit(self)
         self.seconds.setText("00")
-        self.seconds.setFont(QtGui.QFont("Helvetica", 72))
+        self.seconds.setFont(QtGui.QFont("Helvetica", 64))
         self.seconds.resize(100, 100)
-        self.seconds.move(340,10)
+        self.seconds.move(340, 30)
         self.seconds.textChanged.connect(self.process_timer)
 
     def process_state_changes(self):
