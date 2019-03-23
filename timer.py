@@ -44,8 +44,8 @@ class MainWindow(QMainWindow):
         trayIcon = SystemTrayIcon(QtGui.QIcon(resource_path("assets/icon.png")), self)
         trayIcon.show()
 
-        self.setMinimumSize(QSize(480, 320))    # Устанавливаем размеры
-        self.setMaximumSize(QSize(480, 320))    # Устанавливаем размеры
+        self.setMinimumSize(QSize(455, 340))    # Устанавливаем размеры
+        self.setMaximumSize(QSize(455, 340))    # Устанавливаем размеры
         self.setWindowTitle("The timer!!!")
         central_widget = QWidget(self)          # Создаём центральный виджет
         self.setCentralWidget(central_widget)   # Устанавливаем центральный виджет
@@ -90,8 +90,12 @@ class MainWindow(QMainWindow):
         self.display.setAlignment(Qt.Qt.AlignCenter)
         self.display.setText("20:00")
         self.display.setFont(QtGui.QFont("Helvetica", 102))
-        self.display.resize(470, 200)
-        self.display.move(10, 110)
+        self.display.resize(440, 200)
+        self.display.move(10, 135)
+        #self.display.setStyleSheet(""".QLabel {
+        #    border: 1px solid white;
+        #    border-radius: 2px;
+        #}""")
 
     def process_timer(self):
         try:
@@ -115,14 +119,14 @@ class MainWindow(QMainWindow):
         self.minutes = QLineEdit(self)
         self.minutes.setText("25")
         self.minutes.setFont(QtGui.QFont("Helvetica", 64))
-        self.minutes.resize(100, 100)
+        self.minutes.resize(90, 90)
         self.minutes.move(230, 30)
         self.minutes.textChanged.connect(self.process_timer)
 
         self.seconds = QLineEdit(self)
         self.seconds.setText("00")
         self.seconds.setFont(QtGui.QFont("Helvetica", 64))
-        self.seconds.resize(100, 100)
+        self.seconds.resize(90, 90)
         self.seconds.move(340, 30)
         self.seconds.textChanged.connect(self.process_timer)
 
